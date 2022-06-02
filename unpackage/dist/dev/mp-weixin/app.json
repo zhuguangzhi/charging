@@ -1,0 +1,23 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/login/index",
+    "pages/chargingPile/ChargingPayment",
+    "pages/chargingPile/ChargingOrder",
+    "pages/chargingPile/ChargingPileDetail/ChargingPileDetail",
+    "pages/chargingPile/Order"
+  ],
+  "subPackages": [],
+  "window": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "uni-app",
+    "navigationBarBackgroundColor": "#174B89",
+    "backgroundColor": "#F8F8F8"
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "仅用于定位当前设备"
+    }
+  },
+  "usingComponents": {}
+}

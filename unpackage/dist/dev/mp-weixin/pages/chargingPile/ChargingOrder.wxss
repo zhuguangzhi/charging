@@ -1,0 +1,105 @@
+.charging-order.data-v-a3c177ac {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100vw;
+  background-color: #F5F5F5;
+}
+.charging-order-bg.data-v-a3c177ac {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 260rpx;
+}
+.charging-order-card.data-v-a3c177ac {
+  margin-top: 40rpx;
+  margin-left: 37.5rpx;
+  margin-right: 37.5rpx;
+  position: relative;
+  background-color: #FFFFFF;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 6rpx;
+  padding: 8px;
+  box-sizing: border-box;
+}
+.charging-order-card-circle.data-v-a3c177ac {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20rpx 0 30rpx 0;
+}
+.charging-order-card-circle .out-circle.data-v-a3c177ac {
+  position: absolute;
+  width: 220rpx;
+  height: 220rpx;
+  background-image: linear-gradient(to bottom, #2EC1C9, #AC8FC3);
+  border-radius: 220rpx;
+  -webkit-transform: rotate(360deg);
+  -webkit-animation: rotation-data-v-a3c177ac 4s ease infinite;
+          animation: rotation-data-v-a3c177ac 4s ease infinite;
+}
+@-webkit-keyframes rotation-data-v-a3c177ac {
+from {
+    -webkit-transform: rotate(0deg);
+}
+to {
+    -webkit-transform: rotate(360deg);
+}
+}
+.charging-order-card-circle .in-circle.data-v-a3c177ac {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  width: 190rpx;
+  height: 190rpx;
+  border-radius: 190rpx;
+  background-color: #FFFFFF;
+}
+.charging-order-card-circle .in-circle-image.data-v-a3c177ac {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  z-index: -1;
+}
+.charging-order-card-details.data-v-a3c177ac {
+  color: #666666;
+}
+.charging-order-card-details ._p.data-v-a3c177ac {
+  padding: 8px;
+}
+.charging-order-card-money.data-v-a3c177ac {
+  margin: 16px auto;
+  width: 85%;
+  border-top: 1px solid #999999;
+  padding: 8px 16px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.charging-order-card-money-pay.data-v-a3c177ac {
+  margin-top: 16px;
+}
+.charging-order-card-money-pay text.data-v-a3c177ac {
+  display: block;
+  text-align: center;
+}
+.charging-order-cancle.data-v-a3c177ac {
+  height: 50px;
+  margin: 50rpx 37.5rpx;
+}
+.charging-order-cancle button.data-v-a3c177ac {
+  background-color: #000000;
+}
+.charging-order .paymentBtn.data-v-a3c177ac {
+  margin: 16px;
+  border: none;
+  font-size: 14px;
+  padding: 8px 0;
+}
+

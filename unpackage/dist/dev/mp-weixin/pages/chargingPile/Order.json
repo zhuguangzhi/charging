@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "所有订单",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "uni-list": "/uni_modules/uni-list/components/uni-list/uni-list",
+    "mescroll-uni": "/uni_modules/mescroll-uni/components/mescroll-uni/mescroll-uni",
+    "uni-list-chat": "/uni_modules/uni-list/components/uni-list-chat/uni-list-chat"
+  }
+}

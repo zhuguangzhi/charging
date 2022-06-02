@@ -1,0 +1,25 @@
+.shanxing.data-v-15547378 {
+  position: relative;
+  border-radius: 100px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.sx1.data-v-15547378,
+.sx2.data-v-15547378 {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.sx1.data-v-15547378 {
+  z-index: 1;
+}
+.sx2.data-v-15547378 {
+  z-index: 2;
+}
+.sx_t.data-v-15547378 {
+  border-radius: 100px;
+  z-index: 3;
+}
+

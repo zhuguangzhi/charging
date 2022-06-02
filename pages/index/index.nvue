@@ -1,0 +1,305 @@
+<template>
+	<view class="charging">
+		<map class="map" id="map" :longitude="lon" :latitude="lat" :markers="marks" @markertap="markertap" :show-location="true"></map>
+
+		<view class="charging-scan theme" @click="onScanCode()">
+			<image class="charging-scan-image" src="../../static/Img/scan.png" mode=""></image>
+			<text>扫码充电</text>
+		</view>
+		<!-- 停车场 -->
+		<u-popup class="charging-payment-discount-popup" :closeable="false" @close="couponShow=false" @open="couponShow=true" :show="couponShow" mode="bottom" border-radius="14">
+			<view class="map-road-details">
+				<view class="map-road-details-name">
+					{{ station.name }}
+				</view>
+				<!-- <view class="map-road-details-rule">
+					<text>{{ station.rule ? station.rule.memo || station.rule.name : '暂无收费规则' }}</text>
+					<text>30分钟(含)内免费,30分钟以上１小时(含)以内收费5元,超过1小时以每增加1小时加收1元,不足1小时按1小时计费</text>
+				</view>
+				<view class="map-road-details-distance">
+					距离您{{ this.format.m2Km(station.distance || 0) }}
+					距离您 2.3 公里
+				</view>
+				<view class="map-road-details-info">
+					点击下方站点可进行充电
+				</view> -->
+				<view class="map-road-details-total">
+					<text>充电枪总数：{{ station.total }}</text>
+					<text style="margin-left: 16rpx;">可用充电枪数：{{ station.idle }}</text>
+					<!-- <text>充电桩数：20</text> -->
+					<!-- <text style="margin-left: 16rpx;">可用充电桩数：18</text> -->
+				</view>
+				<scroll-view scroll-y="true" style="max-height: 50vh;padding-top: 8px;">
+					<ChargingPileItem v-if="couponShow" :pileList="station.pileList" />
+					<!-- <ChargingPileItem v-if="station.pileList.length>0"/>
+					<hb-empty title="该停车场暂无充电桩" v-else></hb-empty> -->
+				</scroll-view>
+			</view>
+		</u-popup>
+
+		<!-- 历史订单 -->
+		<view class="charging-order" @click="toOrder()">
+			<image src="../../static/Img/orderImg.png" mode=""></image>
+		</view>
+	</view>
+</template>
+
+<script>
+	import QQMapWX from '../../lib/qqmap-wx-jssdk.min.js'
+	import ChargingPileItem from './components/ChargingPileItem.vue'
+	import {routePush} from '@/common/baseFun.js'
+	import {station,ApiBase,errorCheck,device,login} from '../../common/apis.js'
+	import utils from '@/utils/utils.js'
+	import store from '@/store/index.js'
+	export default {
+		components:{
+			ChargingPileItem
+		},
+		data() {
+			return {
+				couponShow:false,
+				amap:null,//高德实例
+				lon:"",
+				lat:"",
+				marks:[],
+				interval:"",//定时
+				stationList:[],
+				station: {},
+				userInfo:null,
+			}
+		},
+
+		async onLoad() {
+			uni.showLoading({
+				title:'加载中'
+			})
+			this.initAMap();
+			// 获取地理位置
+			uni.getLocation({
+			    type: 'wgs84',
+				isHighAccuracy:true,
+				highAccuracyExpireTime:3000,
+			    success: (res)=> {
+					this.lon = res.longitude;
+					this.lat = res.latitude;
+					// this.marks.push({
+					// 	id:1,
+					// 	iconPath: "../../static/Img/position.png",
+					// 	latitude: res.latitude,
+					// 	longitude: res.longitude,
+					// 	height: 28,
+					// 	width: 28,
+					// })
+			    }
+			});
+			
+			// #ifdef MP-WEIXIN
+				await this.login()
+			// #endif
+			// #ifdef H5
+			// await this.H5Login()
+			// #endif
+			this.getStation()
+		},
+		
+		methods: {
+			// 登录
+			async login(){
+				const [uniError,uniData] = await uni.login();
+				const res = await ApiBase(login.userLogin({
+					code:uniData.code,
+					merchantId:this.$config.merchantId,
+					tenantCode:this.$config.tenantCode
+				}),{showLoading:true})
+				if(errorCheck(res.result,res.error)){
+					store.commit('account/login',res.result.data.data)
+					this.userInfo = res.result.data.data
+				}
+				uni.hideLoading()
+			},
+			// h5登录
+			H5Login(name='code'){ 
+				  // 当前网页的url，供微信重定向使用 
+				let loc_href = window.location.href;
+				
+				// 对当前页面的url进行微信要求的urlEncode 处理 
+				loc_href = encodeURIComponent(loc_href);
+				
+				// 构造获取code的链接 
+				let merchantId = this.$config.h5AppId;
+				
+				// 企业微信应用的CorpID 或者 微信公众号的appid 
+				let wxUrl = `https://open.weixin.qq.com/connect/oauth2/authorize
+					?appid=${this.$config.h5AppId}&redirect\_uri=${loc_href}
+					&response_type=code&scope=snsapi_base
+					&state=STATE#wechat_redirect`;
+				console.log(location.href = wxUrl)
+				uni.hideLoading()
+			},
+			
+			// 地图初始化
+			initAMap(){
+				this.amap = new QQMapWX({key:'SVEBZ-25UKD-QS44X-HDHT6-JZLKQ-CHFMG'})
+			},
+			// 扫码
+			onScanCode(){
+				if(!this.userInfo.user || !this.userInfo.user.phone ){
+					routePush('/pages/login/index')
+					return false
+				}
+				uni.scanCode({
+					onlyFromCamera:true,
+					scanType:['qrCode'],
+					success:async(e)=>{
+						let res = utils.urlParamHash(e.result)
+						// 获取该枪信息,判断是否可用
+						const result = await ApiBase(device.GetDevice({code:res.gunCode}))
+						if(errorCheck(result.result,result.error)){
+							if(result.result.data.data[0].status!==0){
+								uni.showToast({
+									icon:'error',
+									title:'该充电枪暂不可使用'
+								})
+							}else {
+								let url = `/pages/chargingPile/ChargingPayment?gunCode=${res.gunCode}&pileCode=${res.pileCode}`
+								routePush(url)
+							}
+						}
+					}
+				})
+			},
+			// 获取充电站
+			async getStation(){
+				const res = await ApiBase(station.GetStation({page:1,row:9999,tenantId:this.$config.tenantCode}))
+				const result= res.result
+				if(errorCheck(result,res.error)){
+					this.stationList = result.data.data
+					for (let i = 0; i < result.data.data.length; i++) {
+						let cionPath = "https://static.hcqzhtc.com/haroad5.png"
+						if (result.data.data[i].idle > 99) {
+							cionPath = "https://static.hcqzhtc.com/icon/road99+.png"
+						} else if (result.data.data[i].idle >= 0 && result.data.data[i].idle <= 99) {
+							cionPath = "https://static.hcqzhtc.com/icon/road" + result.data.data[i].idle + ".png"
+						}
+						this.marks.push({
+							id: i,
+							station: result.data.data[i],
+							latitude: result.data.data[i].latitude,
+							longitude: result.data.data[i].longitude,
+							width: 28,
+							height: 28,
+							// iconPath: "https://www.zysmartparking.com/imageUrl/images/haroad5.png",
+							// iconPath: this.$config.stationIconPath || "https://static.hcqzhtc.com/haroad5.png",
+							iconPath: cionPath,
+						})
+					}
+				}
+				// if (result.data.code == 0) {
+				
+				// } else {
+				// 	uni.showToast({title: result.data.msg, duration: 2000, icon: 'none'})
+				// }
+			},
+			// 点击充电站
+			async markertap(mark){
+				// mark绑定的id是充电站列表的索引
+				// 点自己位置图标了
+				const res = await ApiBase(device.GetDevice({stationId:this.stationList[mark.markerId].id}))
+				if(errorCheck(res.result,res.error)){
+					this.couponShow = true
+					this.station = this.stationList[mark.markerId]
+					this.station.pileList = res.result.data.data
+				}
+			},	
+			//订单页
+			 toOrder(){
+				 if(!this.userInfo.user || !this.userInfo.user.phone ){
+				 	routePush('/pages/login/index')
+				 	return false
+				 }
+				 routePush('/pages/chargingPile/Order')
+			 }
+		},
+		beforeDestroy() {
+			clearInterval(this.interval)
+		}
+	}
+</script>
+
+<style scoped lang="less">
+	.charging {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		width: 100vw;
+	    box-sizing: border-box;
+		height: 100vh;
+		overflow: hidden;
+		
+		// #ifdef H5
+		height: calc(100vh - 44px)!important;
+		// #endif
+		&-order {
+			position: fixed;
+			right: 0;
+			bottom: 300rpx;
+			background-color: rgba(0,0,0,0.6);
+			padding: 8px 12px 8px 24px;
+			border-radius: 20px 0 0 20px ;
+			image {
+				width: 25px;
+				height: 25px;
+				
+			}
+		}
+		.map {
+			width: 100%;
+			height: 100%;
+		}
+		&-scan {
+			position: absolute;
+			bottom: 120rpx;
+			width: 60%;
+			height: 70rpx;
+			margin: 0 auto;
+			border-radius: 70rpx;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: center;
+			opacity: 0.7;
+			&-image {
+				width: 40rpx;
+				height: 40rpx;
+				margin-right: 8px;
+			}
+		}
+		.map-road-details{
+			padding: 16rpx;
+			&-name{
+				line-height: 56rpx;
+				font-size: 32rpx;
+				font-weight: 600;
+			}
+			&-rule, &-distance, &-info{
+				font-size: 28rpx;
+				color: rgb(133, 133, 133);
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+			&-total{
+				display: flex;
+				flex-direction: row;
+				font-size: 32rpx;
+				margin-top: 16rpx;
+			}
+			&-content{
+				display: flex;
+				flex-direction: row;
+				flex-wrap: wrap;
+				width: 100%;
+			}
+		}
+	}
+</style>

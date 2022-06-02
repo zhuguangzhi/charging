@@ -1,0 +1,123 @@
+.charging-payment.data-v-255291e2 {
+  width: 100vw;
+  background-color: #F5F5F5;
+}
+.charging-payment-confirm.data-v-255291e2 {
+  width: 100%;
+  height: 50px;
+  padding: 16px;
+  box-sizing: border-box;
+  font-size: 14px;
+  background-color: #FFFFFF;
+}
+.charging-payment-header.data-v-255291e2 {
+  padding: 18px 8px;
+  font-size: 12px;
+  color: #979797;
+  background-color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+}
+.charging-payment-header text.data-v-255291e2 {
+  display: block;
+  margin-bottom: 8px;
+}
+.charging-payment-header .title.data-v-255291e2 {
+  font-size: 14px;
+}
+.charging-payment-header .chargingImg.data-v-255291e2 {
+  margin: 0 auto;
+  width: 150rpx;
+  height: 150rpx;
+}
+.charging-payment-header .chargingMsg.data-v-255291e2 {
+  display: block;
+  text-align: center;
+  margin-top: 20rpx;
+  font-size: 14px;
+}
+.charging-payment-money.data-v-255291e2,
+.charging-payment-discount.data-v-255291e2,
+.charging-payment-type.data-v-255291e2 {
+  margin: 8px 0;
+  width: 100%;
+  padding: 16px 8px;
+  box-sizing: border-box;
+  font-size: 12px;
+  color: #979797;
+  background-color: #FFFFFF;
+}
+.charging-payment-money text.data-v-255291e2:first-child,
+.charging-payment-discount text.data-v-255291e2:first-child,
+.charging-payment-type text.data-v-255291e2:first-child {
+  color: #000000;
+}
+.charging-payment-money .chose-money.data-v-255291e2,
+.charging-payment-discount .chose-money.data-v-255291e2,
+.charging-payment-type .chose-money.data-v-255291e2 {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.charging-payment-money .chose-money text.data-v-255291e2,
+.charging-payment-discount .chose-money text.data-v-255291e2,
+.charging-payment-type .chose-money text.data-v-255291e2 {
+  display: inline-block;
+  width: 30%;
+  border: 2px solid #979797;
+  border-radius: 5px;
+  margin-top: 8px;
+  text-align: center;
+  height: 80rpx;
+  box-sizing: border-box;
+  line-height: 80rpx;
+  font-size: 14px;
+  color: #979797;
+  margin: 1.65% 1.65%;
+}
+.charging-payment-discount.data-v-255291e2 {
+  display: flex;
+  justify-content: space-between;
+}
+.charging-payment-discount text.data-v-255291e2:last-child {
+  padding: 0 16px;
+}
+.charging-payment-type.data-v-255291e2 {
+  padding: 0 8px;
+  font-size: 14px;
+}
+.charging-payment-type .walletPay.data-v-255291e2,
+.charging-payment-type .weChatPay.data-v-255291e2 {
+  position: relative;
+  width: 100%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  line-height: 40px;
+}
+.charging-payment-type .walletPay .payIcon.data-v-255291e2,
+.charging-payment-type .weChatPay .payIcon.data-v-255291e2 {
+  width: 30rpx;
+  height: 30rpx;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+.charging-payment-type .walletPay .selectIcon.data-v-255291e2,
+.charging-payment-type .weChatPay .selectIcon.data-v-255291e2 {
+  position: absolute;
+  right: 8px;
+  font-size: 14px;
+  display: none;
+}
+.charging-payment-type .walletPay.data-v-255291e2 {
+  border-bottom: 1px solid #cccccc;
+}
+.charging-payment .paymentBtn.data-v-255291e2 {
+  margin: 16px;
+  border: none;
+  font-size: 14px;
+  padding: 8px 0;
+}
+

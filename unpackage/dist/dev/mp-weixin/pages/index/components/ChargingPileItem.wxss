@@ -1,0 +1,70 @@
+.chargingItem.data-v-31b6f109 {
+  width: 100%;
+}
+.chargingItem .charging-pile.data-v-31b6f109 {
+  width: 100%;
+  border-top: 1px solid #999999 !important;
+  display: flex;
+  flex-direction: row!important;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0 0 0;
+}
+.chargingItem .charging-pile-rate.data-v-31b6f109 {
+  width: 120px;
+  border-right: 1px solid #999999;
+}
+.chargingItem .charging-pile-info.data-v-31b6f109 {
+  padding: 0 16px;
+  flex: 1;
+  font-size: 12px;
+}
+.chargingItem .charging-pile-info-header.data-v-31b6f109 {
+  color: #666666;
+  position: relative;
+}
+.chargingItem .charging-pile-info-header-title.data-v-31b6f109 {
+  vertical-align: bottom;
+  display: inline-block;
+}
+.chargingItem .charging-pile-info-header-title text.data-v-31b6f109:first-child {
+  color: #000000;
+  font-size: 14px;
+  font-weight: bold;
+}
+.chargingItem .charging-pile-info-header-icon.data-v-31b6f109 {
+  position: absolute;
+  right: 0;
+  display: inline-block;
+  color: #FFFFFF;
+  vertical-align: bottom;
+  font-size: 12px;
+  padding: 0 8px;
+  border-radius: 4px;
+  background-color: red;
+}
+.chargingItem .charging-pile-info-gun.data-v-31b6f109 {
+  display: inherit;
+  padding: 8px;
+  background-color: #F1F2F3;
+  margin: 8px 0;
+}
+.chargingItem .charging-pile-info-power text.data-v-31b6f109 {
+  margin-bottom: 8px;
+}
+.chargingItem .charging-pile-info-sign.data-v-31b6f109 {
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.chargingItem .charging-pile-info-sign text.data-v-31b6f109 {
+  display: inline-block;
+  padding-right: 8px;
+  border-right: 1px solid #999999;
+}
+.chargingItem .charging-pile-info-sign text.data-v-31b6f109:last-child {
+  padding-left: 8px;
+  border: none;
+}
+
