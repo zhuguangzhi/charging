@@ -47,7 +47,7 @@ button {
   bottom: 300rpx;
   background-color: rgba(0, 0, 0, 0.6);
   padding: 8px 12px 8px 24px;
-  border-radius: 20px 0 0 20px ;
+  border-radius: 20px 0 0 20px;
 }
 .charging-order image.data-v-8ddf7c9c {
   width: 25px;

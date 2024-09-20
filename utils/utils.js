@@ -217,6 +217,19 @@ const getTime = function(oldtime) {
 	// if(h>0)	return `${h}时${m}分`
 	// else 	return `${m}分钟`
 }
+// 分钟转换为天、小时、分
+const convertMinutesToDHM = (minutes)=>{
+  const units = [{ label: '天', value: 1440 }, { label: '小时', value: 60 }, { label: '分钟', value: 1 }];
+
+  const parts = units.reduce((result, { label, value }) => {
+    const quantity = Math.floor(minutes / value);
+    minutes -= quantity * value;
+    if (quantity > 0) result.push(`${quantity}${label}`);
+    return result;
+  }, []);
+
+  return parts.length > 0 ? parts.join('') : '0分钟';
+}
 
 // 获取两个时间之间的时间差
 const getTime2Time = function(date1,date2){
@@ -240,5 +253,6 @@ export default {
 	getParams,
 	platesKey,
 	getTime,
-	getTime2Time
+	getTime2Time,
+	convertMinutesToDHM
 }

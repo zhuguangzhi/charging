@@ -66,7 +66,7 @@
 				</view>
 			</view>
 		</view>
-		<!-- <u-button
+		<u-button
 			v-if="orderInfo.state==0"
 			class="theme"
 			:custom-style="{
@@ -79,7 +79,7 @@
 			@click="pay()"
 		>
 			支付
-		</u-button> -->
+		</u-button>
 		<u-button
 			v-if="orderInfo.state==1"
 			class="theme"
@@ -112,8 +112,8 @@
 </template>
 
 <script>
-	import {OrderApi,ApiBase,errorCheck,device} from '@/common/apis.js';
-	import {routePush} from '@/common/baseFun.js'
+	import {OrderApi,ApiBase,errorCheck,device, login} from '@/common/apis.js';
+	import {routePush,getNowFormatDate} from '@/common/baseFun.js'
 	import utils from '@/utils/utils.js'
 	import format from '@/utils/format.js'
 	export default {
@@ -132,12 +132,19 @@
 		computed:{
 			computedTime(){
 				if(this.orderInfo){
-					if(this.orderInfo.state==1){
+					if(this.orderInfo.state==0) {
+						return '--'
+					}else if(this.orderInfo.state==1){
 						// 充电中
 						return utils.getTime(this.orderInfo.createdSourceTime||0)
 					}
-					// 已完成充电
-					return utils.getTime2Time(this.orderInfo.closeTime,this.orderInfo.createdSourceTime)
+					
+					else {
+						return utils.convertMinutesToDHM(this.orderInfo.duration)
+					}
+					
+					// // 已完成充电
+					// return utils.getTime2Time(this.orderInfo.closeTime,this.orderInfo.createdSourceTime)
 				}else {
 					return '0分钟'
 				}
@@ -182,6 +189,67 @@
 			// 返回首页
 			reBack(){
 				routePush('/pages/index/index','redirectTo')
+			},
+			// 支付
+			async pay(){
+				uni.showLoading({
+					title: '支付中...'
+				});
+				//  查询支付商户
+				const tenantInfoRes = await ApiBase(login.GetPayTenantInfo({tenantCode:this.orderInfo.tenantId,payTenantType:1}))
+				if(!errorCheck(tenantInfoRes.result)) {
+					uni.hideLoading();
+					return;
+				}
+				const tenantInfo = tenantInfoRes.result.data.data
+				const res = await ApiBase(
+					OrderApi.StartPayment({
+						appId: tenantInfo.appId,
+						merchantId: tenantInfo.merchantId,
+						type: 7,
+						channel: 'WeChat',
+						paySource: 'WXH5',
+						couponId: '',
+						payable: this.orderInfo.pay,
+						time: getNowFormatDate(),
+						pileCode: this.orderInfo.pileDevCode,
+						gunCode: this.orderInfo.gunDevCode
+					})
+				);
+				uni.hideLoading();
+				if (errorCheck(res.result)) {
+					uni.getProvider({
+						service: 'payment',
+						success(e) {
+							let data = res.result.data.data;
+							uni.requestPayment({
+								provider: e.provider[0],
+								orderInfo: data.bill,
+								timeStamp: data.data.timeStamp,
+								nonceStr: data.data.nonceStr,
+								package: data.data.packageValue,
+								signType: data.data.signType,
+								paySign: data.data.paySign,
+								_debug: 1, //调试专用
+								complete: () => {
+									uni.showModal({
+										content: '支付已完成',
+										cancelText: '否',
+										confirmText: '是',
+										success: res => {
+											if (res.confirm) {
+												// 确定
+												routePush(`/pages/chargingPile/Order`,'reLaunch');
+											} else {
+												routePush('/pages/index/index','reLaunch');
+											}
+										}
+									});
+								}
+							});
+						}
+					});
+				}
 			}
 			
 		}

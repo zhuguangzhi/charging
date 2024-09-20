@@ -43,7 +43,7 @@
 				this.mescroll = mescroll;
 			},
 			async getData(){
-				let res = await ApiBase(OrderApi.GetPayOrder({page:1,row:30,tenantId:this.$config.tenantCode}))
+				let res = await ApiBase(OrderApi.GetPayOrder({page:1,row:30}))
 				if(errorCheck(res.result,res.error)){
 					res.result.data.data.forEach(item=>{
 						this.orderList.push(item)

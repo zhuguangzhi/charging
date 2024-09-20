@@ -37,22 +37,66 @@ import Vue from 'vue'
  * SERVICE_SHOP = 713; —-线下收银
  * SERVICE_AUTOMAT = 714; —-自动贩卖
  */
-const service = [
-  { key: 0, value: '无' },
-  { key: 1, value: '钱包充值' },
-  { key: 2, value: '套餐购买/续费' },
-  { key: 3, value: '优惠券领取/发放' },
-  { key: 4, value: '储值卡充值' },
-  { key: 10, value: '充电（通用）' },
-  { key: 11, value: '充电（汽车直流快充）' },
-  { key: 12, value: '充电（汽车交流慢充）' },
-  { key: 13, value: '充电（电单车充电）' },
-  { key: 14, value: '充充电（充电宝）' },
-  { key: 15, value: '预付费电表' },
-  { key: 20, value: '停车（通用）' },
-  { key: 21, value: '停车（路边）' },
-  { key: 22, value: '停车（停车场）' },
-  { key: 15, value: '预付费电表' },
+const service = [{
+		key: 0,
+		value: '无'
+	},
+	{
+		key: 1,
+		value: '钱包充值'
+	},
+	{
+		key: 2,
+		value: '套餐购买/续费'
+	},
+	{
+		key: 3,
+		value: '优惠券领取/发放'
+	},
+	{
+		key: 4,
+		value: '储值卡充值'
+	},
+	{
+		key: 10,
+		value: '充电（通用）'
+	},
+	{
+		key: 11,
+		value: '充电（汽车直流快充）'
+	},
+	{
+		key: 12,
+		value: '充电（汽车交流慢充）'
+	},
+	{
+		key: 13,
+		value: '充电（电单车充电）'
+	},
+	{
+		key: 14,
+		value: '充充电（充电宝）'
+	},
+	{
+		key: 15,
+		value: '预付费电表'
+	},
+	{
+		key: 20,
+		value: '停车（通用）'
+	},
+	{
+		key: 21,
+		value: '停车（路边）'
+	},
+	{
+		key: 22,
+		value: '停车（停车场）'
+	},
+	{
+		key: 15,
+		value: '预付费电表'
+	},
 ]
 
 // RECEIPT_STATE_NO = 0; //未开票
@@ -61,12 +105,26 @@ const service = [
 // RECEIPT_STATE_SUCCESS = 3; //出票成功
 // RECEIPT_STATE_FAILED = 4; //出票失败
 // 开票状态
-const invoiceState = [
-  { key: 0, value: '未开票' },
-  { key: 1, value: '等待开票' },
-  { key: 2, value: '出票中' },
-  { key: 3, value: '出票成功' },
-  { key: 4, value: '出票失败' },
+const invoiceState = [{
+		key: 0,
+		value: '未开票'
+	},
+	{
+		key: 1,
+		value: '等待开票'
+	},
+	{
+		key: 2,
+		value: '出票中'
+	},
+	{
+		key: 3,
+		value: '出票成功'
+	},
+	{
+		key: 4,
+		value: '出票失败'
+	},
 ]
 
 // 0：’已支付’;
@@ -79,69 +137,189 @@ const invoiceState = [
 // 7：’等待结束’;
 // 8：’充电完成’;
 // 账单状态
-const paymentState = [
-  { key: 0, value: '已支付' },
-  { key: 1, value: '已退款' },
-  { key: 2, value: '已完成' },
-  { key: 3, value: '退款中' },
-  { key: 4, value: '-' },
-  { key: 5, value: '-' },
-  { key: 6, value: '等待开始' },
-  { key: 7, value: '等待结束' },
-  { key: 8, value: '-' },
+const paymentState = [{
+		key: 0,
+		value: '已支付'
+	},
+	{
+		key: 1,
+		value: '已退款'
+	},
+	{
+		key: 2,
+		value: '已完成'
+	},
+	{
+		key: 3,
+		value: '退款中'
+	},
+	{
+		key: 4,
+		value: '-'
+	},
+	{
+		key: 5,
+		value: '-'
+	},
+	{
+		key: 6,
+		value: '等待开始'
+	},
+	{
+		key: 7,
+		value: '等待结束'
+	},
+	{
+		key: 8,
+		value: '-'
+	},
 ]
 
 // 支付方式
-const gatewayOptions = [
-  { key: "alipay", value: "支付宝" },
-  { key: "wechat", value: "微信" },
-  { key: "abc", value: "农行" },
-  { key: "hxb", value: "华夏银行" },
-  { key: "userpay", value: "钱包" },
-  { key: "cardpay", value: "储值卡" },
-  { key: "cash", value: "现金" },
-  { key: "sgcc", value: "国网" },
-  { key: "ckej", value: "城客e家" },
-  { key: "heemoney", value: "洪城一卡通" },
-  { key: "ums", value: "银联商务" },
-  { key: "open", value: "第三方" }
+const gatewayOptions = [{
+		key: "alipay",
+		value: "支付宝"
+	},
+	{
+		key: "wechat",
+		value: "微信"
+	},
+	{
+		key: "abc",
+		value: "农行"
+	},
+	{
+		key: "hxb",
+		value: "华夏银行"
+	},
+	{
+		key: "userpay",
+		value: "钱包"
+	},
+	{
+		key: "cardpay",
+		value: "储值卡"
+	},
+	{
+		key: "cash",
+		value: "现金"
+	},
+	{
+		key: "sgcc",
+		value: "国网"
+	},
+	{
+		key: "ckej",
+		value: "城客e家"
+	},
+	{
+		key: "heemoney",
+		value: "洪城一卡通"
+	},
+	{
+		key: "ums",
+		value: "银联商务"
+	},
+	{
+		key: "open",
+		value: "第三方"
+	}
 ]
 
 // 订单状态
-const pdrStateOptions = [
-  { key: 1, value: "停车中" },
-  { key: 2, value: "已完成" },
-  { key: 3, value: "等待取证" },
-  { key: 4, value: "等待入场" },
-  { key: 5, value: "等待出场" },
-  { key: 6, value: "待付款" },
-  { key: 7, value: "已关闭" },
-  { key: 8, value: "欠费" },
-  { key: 9, value: "退款中" },
-  { key: 255, value: "异常" }
+const pdrStateOptions = [{
+		key: 1,
+		value: "停车中"
+	},
+	{
+		key: 2,
+		value: "已完成"
+	},
+	{
+		key: 3,
+		value: "等待取证"
+	},
+	{
+		key: 4,
+		value: "等待入场"
+	},
+	{
+		key: 5,
+		value: "等待出场"
+	},
+	{
+		key: 6,
+		value: "待付款"
+	},
+	{
+		key: 7,
+		value: "已关闭"
+	},
+	{
+		key: 8,
+		value: "欠费"
+	},
+	{
+		key: 9,
+		value: "退款中"
+	},
+	{
+		key: 255,
+		value: "异常"
+	}
 ]
 
 // 共享车位审核
-const checkState = [
-  { key: 1, value: "审核中" },
-  { key: 2, value: "审核通过" },
-  { key: 3, value: "审核失败" }
+const checkState = [{
+		key: 1,
+		value: "审核中"
+	},
+	{
+		key: 2,
+		value: "审核通过"
+	},
+	{
+		key: 3,
+		value: "审核失败"
+	}
 ]
 
 // 车牌颜色
-const color = [
-  { key: 'blue', value: "蓝牌" },
-  { key: 'green', value: "绿牌" },
-  { key: 'yellow', value: "黄牌" },
-  { key: 'black', value: "黑牌" },
-  { key: 'white', value: "白牌" }
+const color = [{
+		key: 'blue',
+		value: "蓝牌"
+	},
+	{
+		key: 'green',
+		value: "绿牌"
+	},
+	{
+		key: 'yellow',
+		value: "黄牌"
+	},
+	{
+		key: 'black',
+		value: "黑牌"
+	},
+	{
+		key: 'white',
+		value: "白牌"
+	}
 ]
 
 // 认证状态 0；待审核，1：审核通过，2：审核失败
-const authState = [
-  { key: '审核中', value: 0 },
-  { key: '认证通过', value: 1 },
-  { key: '认证失败', value: 2 }
+const authState = [{
+		key: '审核中',
+		value: 0
+	},
+	{
+		key: '认证通过',
+		value: 1
+	},
+	{
+		key: '认证失败',
+		value: 2
+	}
 ]
 
 /**
@@ -150,101 +328,147 @@ const authState = [
  * @param {*} defVal 默认值
  */
 const getValueByKey = (data, key, defVal) => {
-  for (let i = 0; i < data.length; i++) {
-    const item = data[i]
-    if (item.key == key) {
-      return item.value
-    }
-  }
-  return defVal || ''
+	for (let i = 0; i < data.length; i++) {
+		const item = data[i]
+		if (item.key == key) {
+			return item.value
+		}
+	}
+	return defVal || ''
 }
 // 通过Value获取Key
 const getKeyByValue = (data, value, defVal) => {
-  for (let i = 0; i < data.length; i++) {
-    const item = data[i]
-    if (item.value == value) {
-      return item.key
-    }
-  }
-  return defVal || ''
+	for (let i = 0; i < data.length; i++) {
+		const item = data[i]
+		if (item.value == value) {
+			return item.key
+		}
+	}
+	return defVal || ''
 }
 
 // 停车时间格式化
 const durationFormat = (duration) => {
-  let time = "";
-  // 天
-  if (Math.floor(duration / 86400) > 0) {
-    time = time + Math.floor(duration / 86400) + "天"
-  }
-  // 小时
-  if (Math.floor((duration % 86400) / 3600) > 0) {
-    time = time + Math.floor((duration % 86400) / 3600) + "小时"
-  }
-  // 分钟
-  if ((Math.floor(((duration % 86400) % 3600) / 60)) > 0) {
-    time = time + (Math.floor(((duration % 86400) % 3600) / 60)) + "分钟"
-  }
-  // 秒
-  if ((((duration % 86400) % 3600) % 60) > 0) {
-    time = time + (((duration % 86400) % 3600) % 60) + "秒"
-  }
-  return time;
+	let time = "";
+	// 天
+	if (Math.floor(duration / 86400) > 0) {
+		time = time + Math.floor(duration / 86400) + "天"
+	}
+	// 小时
+	if (Math.floor((duration % 86400) / 3600) > 0) {
+		time = time + Math.floor((duration % 86400) / 3600) + "小时"
+	}
+	// 分钟
+	if ((Math.floor(((duration % 86400) % 3600) / 60)) > 0) {
+		time = time + (Math.floor(((duration % 86400) % 3600) / 60)) + "分钟"
+	}
+	// 秒
+	if ((((duration % 86400) % 3600) % 60) > 0) {
+		time = time + (((duration % 86400) % 3600) % 60) + "秒"
+	}
+	return time;
 }
 
 // timeZEROformat 时间为0的格式化
 const timeZeroFormat = (time) => {
-  if (time && time != "1970-01-01 08:00:00") {
-    return time
-  }
-  return ''
+	if (time && time != "1970-01-01 08:00:00") {
+		return time
+	}
+	return ''
 }
 
 // 枪使用状态
-const gunStatus = [
-  {key:0,label:'空闲'},
-  {key:1,label:'充电中'},
-  {key:2,label:'充电结束'},
-  {key:3,label:'车端暂停充电'},
+const gunStatus = [{
+		key: 0,
+		label: '空闲'
+	},
+	{
+		key: 1,
+		label: '充电中'
+	},
+	{
+		key: 2,
+		label: '充电结束'
+	},
+	{
+		key: 3,
+		label: '车端暂停充电'
+	},
 ]
 // 获取枪状态
-const getGunStatus = (key)=>{
-	return gunStatus.find(item=> item.key === key).label
+const getGunStatus = (key) => {
+	return gunStatus.find(item => item.key === key).label
 }
 // 订单状态
-const orderStatus = [
-	{key:0,label:'等待支付'},
-	{key:1,label:'充电中'},
-	{key:2,label:'充电完成'},
-	{key:3,label:'用户终止充电'},
-	{key:4,label:'拔枪终止充电'},
-	{key:5,label:'设备请求超时'},
-	{key:6,label:'订单关闭'},
-	{key:7,label:'未插枪'},
-	{key:8,label:'车端未启动充电'},
-	{key:9,label:'急停按钮触发'},
-	{key:10,label:'管理员终止充电'},
-	{key:11,label:'刷卡终止充电'},
+const orderStatus = [{
+		key: 0,
+		label: '等待支付'
+	},
+	{
+		key: 1,
+		label: '充电中'
+	},
+	{
+		key: 2,
+		label: '充电完成'
+	},
+	{
+		key: 3,
+		label: '用户终止充电'
+	},
+	{
+		key: 4,
+		label: '拔枪终止充电'
+	},
+	{
+		key: 5,
+		label: '设备请求超时'
+	},
+	{
+		key: 6,
+		label: '订单关闭'
+	},
+	{
+		key: 7,
+		label: '未插枪'
+	},
+	{
+		key: 8,
+		label: '车端未启动充电'
+	},
+	{
+		key: 9,
+		label: '急停按钮触发'
+	},
+	{
+		key: 10,
+		label: '管理员终止充电'
+	},
+	{
+		key: 11,
+		label: '刷卡终止充电'
+	},
 ]
 
-const getOrderStatus = (status)=>{
+const getOrderStatus = (status) => {
 	// console.log('----status',status,orderStatus.find(item=>item.key===status).label)
-	if (!isNaN(status)) 
-		return orderStatus.find(item=>item.key===status).label
+	if (!isNaN(status))
+		return orderStatus.find(item => item.key === status).label
 }
 
 export default {
-  getValueByKey,
-  getKeyByValue,
-  service,
-  invoiceState, // 开票状态
-  paymentState, // 账单状态
-  gatewayOptions, // 支付方式
-  pdrStateOptions, // 订单状态
-  durationFormat, // 时长格式化
-  checkState, // 共享车位审核状态
-  color,  // 车牌颜色
-  authState, // 认证状态
-  timeZeroFormat, // 时间为0格式化
-  getGunStatus,//充电枪状态
-  getOrderStatus,//订单状态
+	getValueByKey,
+	getKeyByValue,
+	service,
+	invoiceState, // 开票状态
+	paymentState, // 账单状态
+	gatewayOptions, // 支付方式
+	pdrStateOptions, // 订单状态
+	durationFormat, // 时长格式化
+	checkState, // 共享车位审核状态
+	color, // 车牌颜色
+	authState, // 认证状态
+	timeZeroFormat, // 时间为0格式化
+	getGunStatus, //充电枪状态
+	getOrderStatus, //订单状态
 }

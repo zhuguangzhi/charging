@@ -1,7 +1,7 @@
 {
 	"easycom": {
-			"^u-(.*)": "@/uni_modules/uview-ui/components/u-$1/u-$1.vue"
-		},
+		"^u-(.*)": "@/uni_modules/uview-ui/components/u-$1/u-$1.vue"
+	},
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		// {
 		// 	"path": "pages/index/index",
@@ -9,24 +9,24 @@
 		// 		"navigationBarTitleText": "充电设备"
 		// 	}
 		// },
-	
+
 		{
-		    "path" : "pages/index/index",
-		    "style" :                                                                                    
-		    {
-		        "navigationBarTitleText": "充电设备",
-		        "enablePullDownRefresh": false
-		    }
-		    
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "充电设备",
+				"enablePullDownRefresh": false
+			}
+
 		},
 		{
 			"path": "pages/login/index",
 			"style": {
 				"navigationBarTitleText": "登录",
-				"navigationBarBackgroundColor":"#FFFFFF"
+				"navigationBarBackgroundColor": "#FFFFFF"
 			}
 		},
-		
+
+
 		{
 			"path": "pages/chargingPile/ChargingPayment",
 			"style": {
@@ -39,35 +39,37 @@
 				"navigationBarTitleText": "订单"
 			}
 		}
-		
-        ,{
-            "path" : "pages/chargingPile/ChargingPileDetail/ChargingPileDetail",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "充电桩详情",
-                "enablePullDownRefresh": false,
-				"navigationStyle":"custom"
-            }
-            
-        }
-        ,{
-            "path" : "pages/chargingPile/Order",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "所有订单",
-                "enablePullDownRefresh": false,
-				"app-plus" : {
-					"bounce" : "none" // 取消APP端iOS回弹,避免与下拉刷新冲突 (可统一配在 'globalStyle')
+
+		, {
+			"path": "pages/chargingPile/ChargingPileDetail/ChargingPileDetail",
+			"style": {
+				"navigationBarTitleText": "充电桩详情",
+				"enablePullDownRefresh": false,
+				"navigationStyle": "custom"
+			}
+
+		}, {
+			"path": "pages/chargingPile/Order",
+			"style": {
+				"navigationBarTitleText": "所有订单",
+				"enablePullDownRefresh": false,
+				"app-plus": {
+					"bounce": "none" // 取消APP端iOS回弹,避免与下拉刷新冲突 (可统一配在 'globalStyle')
 				},
-				"mp-alipay":{"allowsBounceVertical":"NO"}// 取消支付宝和钉钉小程序的iOS回弹,避免与下拉刷新冲突 (可统一配在 'globalStyle')
-            }
-            
-        }
-    ],
+				"mp-alipay": {
+					"allowsBounceVertical": "NO"
+				} // 取消支付宝和钉钉小程序的iOS回弹,避免与下拉刷新冲突 (可统一配在 'globalStyle')
+			}
+
+		}
+	],
 	"globalStyle": {
 		"navigationBarTextStyle": "white",
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#174B89",
 		"backgroundColor": "#F8F8F8"
-	}
+	},
+	"requiredPrivateInfos": [
+		"getLocation"
+	]
 }

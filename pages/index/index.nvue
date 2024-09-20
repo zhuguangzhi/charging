@@ -7,11 +7,17 @@
 			<text>扫码充电</text>
 		</view>
 		<!-- 停车场 -->
-		<u-popup class="charging-payment-discount-popup" :closeable="false" @close="couponShow=false" @open="couponShow=true" :show="couponShow" mode="bottom" border-radius="14">
+		<u-popup
+			class="charging-payment-discount-popup"
+			:closeable="false"
+			@close="couponShow = false"
+			@open="couponShow = true"
+			:show="couponShow"
+			mode="bottom"
+			border-radius="14"
+		>
 			<view class="map-road-details">
-				<view class="map-road-details-name">
-					{{ station.name }}
-				</view>
+				<view class="map-road-details-name">{{ station.name }}</view>
 				<!-- <view class="map-road-details-rule">
 					<text>{{ station.rule ? station.rule.memo || station.rule.name : '暂无收费规则' }}</text>
 					<text>30分钟(含)内免费,30分钟以上１小时(含)以内收费5元,超过1小时以每增加1小时加收1元,不足1小时按1小时计费</text>
@@ -38,268 +44,267 @@
 		</u-popup>
 
 		<!-- 历史订单 -->
-		<view class="charging-order" @click="toOrder()">
-			<image src="../../static/Img/orderImg.png" mode=""></image>
-		</view>
+		<view class="charging-order" @click="toOrder()"><image src="../../static/Img/orderImg.png" mode=""></image></view>
 	</view>
 </template>
 
 <script>
-	import QQMapWX from '../../lib/qqmap-wx-jssdk.min.js'
-	import ChargingPileItem from './components/ChargingPileItem.vue'
-	import {routePush} from '@/common/baseFun.js'
-	import {station,ApiBase,errorCheck,device,login} from '../../common/apis.js'
-	import utils from '@/utils/utils.js'
-	import store from '@/store/index.js'
-	export default {
-		components:{
-			ChargingPileItem
+import QQMapWX from '../../lib/qqmap-wx-jssdk.min.js';
+import ChargingPileItem from './components/ChargingPileItem.vue';
+import { routePush } from '@/common/baseFun.js';
+import { station, ApiBase, errorCheck, device, login } from '../../common/apis.js';
+import utils from '@/utils/utils.js';
+import { mapState } from 'vuex';
+export default {
+	components: {
+		ChargingPileItem
+	},
+	data() {
+		return {
+			couponShow: false,
+			amap: null, //高德实例
+			lon: '',
+			lat: '',
+			marks: [],
+			interval: '', //定时
+			stationList: [],
+			station: {},
+			staticUrl: ''
+		};
+	},
+	computed: {
+		...mapState('account', ['user'])
+	},
+
+	async onLoad() {
+		// console.log('this.$config.staticUrl;', this.$config.staticUrl);
+		// this.staticUrl = this.$config.staticUrl;
+		// uni.showLoading({
+		// 	title: '加载中'
+		// });
+		this.initAMap();
+		// 获取地理位置
+		uni.getLocation({
+			type: 'wgs84',
+			isHighAccuracy: true,
+			highAccuracyExpireTime: 3000,
+			success: res => {
+				this.lon = res.longitude;
+				this.lat = res.latitude;
+				// this.marks.push({
+				// 	id:1,
+				// 	iconPath: "../../static/Img/position.png",
+				// 	latitude: res.latitude,
+				// 	longitude: res.longitude,
+				// 	height: 28,
+				// 	width: 28,
+				// })
+			}
+		});
+	},
+	onShow() {
+		this.getStation();
+	},
+
+	methods: {
+		// 地图初始化
+		initAMap() {
+			this.amap = new QQMapWX({ key: 'SVEBZ-25UKD-QS44X-HDHT6-JZLKQ-CHFMG' });
 		},
-		data() {
-			return {
-				couponShow:false,
-				amap:null,//高德实例
-				lon:"",
-				lat:"",
-				marks:[],
-				interval:"",//定时
-				stationList:[],
-				station: {},
-				userInfo:null,
+		// 扫码
+		onScanCode() {
+			if (!this.user.user || !this.user.user.phone) {
+				routePush('/pages/login/index');
+				return false;
+			}
+			uni.scanCode({
+				onlyFromCamera: true,
+				scanType: ['qrCode'],
+				success: async e => {
+					let res = utils.urlParamHash(e.result);
+					console.log('res', res);
+					let url = `/pages/chargingPile/ChargingPayment?pileCode=${res.pileCode}`;
+					routePush(url);
+					// 获取该枪信息,判断是否可用
+					// const result = await ApiBase(device.GetDevice({ code: res.gunCode }));
+					// const result = await ApiBase(device.GetDevice({ code: res.pileCode + '_1' }));
+					// if (errorCheck(result.result, result.error)) {
+					// 	if (result.result.data.data[0].status !== 0) {
+					// 		uni.showToast({
+					// 			icon: 'error',
+					// 			title: '该充电枪暂不可使用'
+					// 		});
+					// 	} else {
+					// 		// let url = `/pages/chargingPile/ChargingPayment?gunCode=${res.gunCode}&pileCode=${res.pileCode}`;
+					// 		let url = `/pages/chargingPile/ChargingPayment?pileCode=${res.pileCode}`;
+					// 		routePush(url);
+					// 	}
+					// }
+				}
+			});
+		},
+		//  设置图标
+		async formatMask() {
+			const array = [...this.stationList];
+			this.marks = [];
+			//  设置气泡
+			const setCallout = item => {
+				return {
+					content: `余${item.idle}/${item.total}`,
+					display: 'ALWAYS',
+					bgColor: '#FFFFFF',
+					padding: 4,
+					color: item.idle ? '#1ABF8E' : '#FE393A',
+					borderRadius: 20,
+					borderColor: '#ffffff'
+				};
+			};
+			this.marks = array.map((item, index) => {
+				return {
+					id: index,
+					latitude: Number(item.latitude),
+					longitude: Number(item.longitude),
+					width: 26,
+					height: 33,
+					iconPath: item.idle ? '/static/Img/chargingImg/address.png' : '/static/Img/chargingImg/address1.png',
+					callout: setCallout(item)
+				};
+			});
+			console.log('this.marks', this.marks);
+		},
+		// 获取充电站
+		async getStation() {
+			const res = await ApiBase(station.GetStation({ page: 1, row: 9999, tenantId: this.$config.tenantCode }));
+			const result = res.result;
+			if (!errorCheck(result, res.error)) return;
+			this.stationList = result.data.data;
+			this.formatMask();
+			// for (let i = 0; i < result.data.data.length; i++) {
+			// 	let cionPath = `${this.staticUrl}/haroad5.png`;
+			// 	if (result.data.data[i].idle > 99) {
+			// 		cionPath = `${this.staticUrl}/icon/road99+.png`;
+			// 	} else if (result.data.data[i].idle >= 0 && result.data.data[i].idle <= 99) {
+			// 		cionPath = `${this.staticUrl}/icon/road` + result.data.data[i].idle + '.png';
+			// 	}
+			// 	this.marks.push({
+			// 		id: i,
+			// 		station: result.data.data[i],
+			// 		latitude: result.data.data[i].latitude,
+			// 		longitude: result.data.data[i].longitude,
+			// 		width: 28,
+			// 		height: 28,
+			// 		// iconPath: "https://www.zysmartparking.com/imageUrl/images/haroad5.png",
+			// 		// iconPath: this.$config.stationIconPath || "https://static.hcqzhtc.com/haroad5.png",
+			// 		iconPath: cionPath
+			// 	});
+			// }
+			// if (result.data.code == 0) {
+
+			// } else {
+			// 	uni.showToast({title: result.data.msg, duration: 2000, icon: 'none'})
+			// }
+		},
+		// 点击充电站
+		async markertap(mark) {
+			// mark绑定的id是充电站列表的索引
+			// 点自己位置图标了
+			const res = await ApiBase(device.GetDevice({ stationId: this.stationList[mark.markerId].id }));
+			if (errorCheck(res.result, res.error)) {
+				this.couponShow = true;
+				this.station = this.stationList[mark.markerId];
+				this.station.pileList = res.result.data.data;
 			}
 		},
-
-		async onLoad() {
-			uni.showLoading({
-				title:'加载中'
-			})
-			this.initAMap();
-			// 获取地理位置
-			uni.getLocation({
-			    type: 'wgs84',
-				isHighAccuracy:true,
-				highAccuracyExpireTime:3000,
-			    success: (res)=> {
-					this.lon = res.longitude;
-					this.lat = res.latitude;
-					// this.marks.push({
-					// 	id:1,
-					// 	iconPath: "../../static/Img/position.png",
-					// 	latitude: res.latitude,
-					// 	longitude: res.longitude,
-					// 	height: 28,
-					// 	width: 28,
-					// })
-			    }
-			});
-			
-			// #ifdef MP-WEIXIN
-				await this.login()
-			// #endif
-			// #ifdef H5
-			// await this.H5Login()
-			// #endif
-			this.getStation()
-		},
-		
-		methods: {
-			// 登录
-			async login(){
-				const [uniError,uniData] = await uni.login();
-				const res = await ApiBase(login.userLogin({
-					code:uniData.code,
-					merchantId:this.$config.merchantId,
-					tenantCode:this.$config.tenantCode
-				}),{showLoading:true})
-				if(errorCheck(res.result,res.error)){
-					store.commit('account/login',res.result.data.data)
-					this.userInfo = res.result.data.data
-				}
-				uni.hideLoading()
-			},
-			// h5登录
-			H5Login(name='code'){ 
-				  // 当前网页的url，供微信重定向使用 
-				let loc_href = window.location.href;
-				
-				// 对当前页面的url进行微信要求的urlEncode 处理 
-				loc_href = encodeURIComponent(loc_href);
-				
-				// 构造获取code的链接 
-				let merchantId = this.$config.h5AppId;
-				
-				// 企业微信应用的CorpID 或者 微信公众号的appid 
-				let wxUrl = `https://open.weixin.qq.com/connect/oauth2/authorize
-					?appid=${this.$config.h5AppId}&redirect\_uri=${loc_href}
-					&response_type=code&scope=snsapi_base
-					&state=STATE#wechat_redirect`;
-				console.log(location.href = wxUrl)
-				uni.hideLoading()
-			},
-			
-			// 地图初始化
-			initAMap(){
-				this.amap = new QQMapWX({key:'SVEBZ-25UKD-QS44X-HDHT6-JZLKQ-CHFMG'})
-			},
-			// 扫码
-			onScanCode(){
-				if(!this.userInfo.user || !this.userInfo.user.phone ){
-					routePush('/pages/login/index')
-					return false
-				}
-				uni.scanCode({
-					onlyFromCamera:true,
-					scanType:['qrCode'],
-					success:async(e)=>{
-						let res = utils.urlParamHash(e.result)
-						// 获取该枪信息,判断是否可用
-						const result = await ApiBase(device.GetDevice({code:res.gunCode}))
-						if(errorCheck(result.result,result.error)){
-							if(result.result.data.data[0].status!==0){
-								uni.showToast({
-									icon:'error',
-									title:'该充电枪暂不可使用'
-								})
-							}else {
-								let url = `/pages/chargingPile/ChargingPayment?gunCode=${res.gunCode}&pileCode=${res.pileCode}`
-								routePush(url)
-							}
-						}
-					}
-				})
-			},
-			// 获取充电站
-			async getStation(){
-				const res = await ApiBase(station.GetStation({page:1,row:9999,tenantId:this.$config.tenantCode}))
-				const result= res.result
-				if(errorCheck(result,res.error)){
-					this.stationList = result.data.data
-					for (let i = 0; i < result.data.data.length; i++) {
-						let cionPath = "https://static.hcqzhtc.com/haroad5.png"
-						if (result.data.data[i].idle > 99) {
-							cionPath = "https://static.hcqzhtc.com/icon/road99+.png"
-						} else if (result.data.data[i].idle >= 0 && result.data.data[i].idle <= 99) {
-							cionPath = "https://static.hcqzhtc.com/icon/road" + result.data.data[i].idle + ".png"
-						}
-						this.marks.push({
-							id: i,
-							station: result.data.data[i],
-							latitude: result.data.data[i].latitude,
-							longitude: result.data.data[i].longitude,
-							width: 28,
-							height: 28,
-							// iconPath: "https://www.zysmartparking.com/imageUrl/images/haroad5.png",
-							// iconPath: this.$config.stationIconPath || "https://static.hcqzhtc.com/haroad5.png",
-							iconPath: cionPath,
-						})
-					}
-				}
-				// if (result.data.code == 0) {
-				
-				// } else {
-				// 	uni.showToast({title: result.data.msg, duration: 2000, icon: 'none'})
-				// }
-			},
-			// 点击充电站
-			async markertap(mark){
-				// mark绑定的id是充电站列表的索引
-				// 点自己位置图标了
-				const res = await ApiBase(device.GetDevice({stationId:this.stationList[mark.markerId].id}))
-				if(errorCheck(res.result,res.error)){
-					this.couponShow = true
-					this.station = this.stationList[mark.markerId]
-					this.station.pileList = res.result.data.data
-				}
-			},	
-			//订单页
-			 toOrder(){
-				 if(!this.userInfo.user || !this.userInfo.user.phone ){
-				 	routePush('/pages/login/index')
-				 	return false
-				 }
-				 routePush('/pages/chargingPile/Order')
-			 }
-		},
-		beforeDestroy() {
-			clearInterval(this.interval)
+		//订单页
+		toOrder() {
+			if (!this.user.user || !this.user.user.phone) {
+				routePush('/pages/login/index');
+				return false;
+			}
+			routePush('/pages/chargingPile/Order');
 		}
+	},
+	beforeDestroy() {
+		clearInterval(this.interval);
 	}
+};
 </script>
 
 <style scoped lang="less">
-	.charging {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		width: 100vw;
-	    box-sizing: border-box;
-		height: 100vh;
-		overflow: hidden;
-		
-		// #ifdef H5
-		height: calc(100vh - 44px)!important;
-		// #endif
-		&-order {
-			position: fixed;
-			right: 0;
-			bottom: 300rpx;
-			background-color: rgba(0,0,0,0.6);
-			padding: 8px 12px 8px 24px;
-			border-radius: 20px 0 0 20px ;
-			image {
-				width: 25px;
-				height: 25px;
-				
-			}
-		}
-		.map {
-			width: 100%;
-			height: 100%;
-		}
-		&-scan {
-			position: absolute;
-			bottom: 120rpx;
-			width: 60%;
-			height: 70rpx;
-			margin: 0 auto;
-			border-radius: 70rpx;
-			display: flex;
-			flex-direction: row;
-			align-items: center;
-			justify-content: center;
-			opacity: 0.7;
-			&-image {
-				width: 40rpx;
-				height: 40rpx;
-				margin-right: 8px;
-			}
-		}
-		.map-road-details{
-			padding: 16rpx;
-			&-name{
-				line-height: 56rpx;
-				font-size: 32rpx;
-				font-weight: 600;
-			}
-			&-rule, &-distance, &-info{
-				font-size: 28rpx;
-				color: rgb(133, 133, 133);
-				overflow: hidden;
-				text-overflow: ellipsis;
-			}
-			&-total{
-				display: flex;
-				flex-direction: row;
-				font-size: 32rpx;
-				margin-top: 16rpx;
-			}
-			&-content{
-				display: flex;
-				flex-direction: row;
-				flex-wrap: wrap;
-				width: 100%;
-			}
+.charging {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100vw;
+	box-sizing: border-box;
+	height: 100vh;
+	overflow: hidden;
+
+	// #ifdef H5
+	height: calc(100vh - 44px) !important;
+	// #endif
+	&-order {
+		position: fixed;
+		right: 0;
+		bottom: 300rpx;
+		background-color: rgba(0, 0, 0, 0.6);
+		padding: 8px 12px 8px 24px;
+		border-radius: 20px 0 0 20px;
+		image {
+			width: 25px;
+			height: 25px;
 		}
 	}
+	.map {
+		width: 100%;
+		height: 100%;
+	}
+	&-scan {
+		position: absolute;
+		bottom: 120rpx;
+		width: 60%;
+		height: 70rpx;
+		margin: 0 auto;
+		border-radius: 70rpx;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		opacity: 0.7;
+		&-image {
+			width: 40rpx;
+			height: 40rpx;
+			margin-right: 8px;
+		}
+	}
+	.map-road-details {
+		padding: 16rpx;
+		&-name {
+			line-height: 56rpx;
+			font-size: 32rpx;
+			font-weight: 600;
+		}
+		&-rule,
+		&-distance,
+		&-info {
+			font-size: 28rpx;
+			color: rgb(133, 133, 133);
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+		&-total {
+			display: flex;
+			flex-direction: row;
+			font-size: 32rpx;
+			margin-top: 16rpx;
+		}
+		&-content {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			width: 100%;
+		}
+	}
+}
 </style>
